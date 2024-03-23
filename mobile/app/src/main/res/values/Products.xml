@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <string name="str_products_values"></string>
+
+        <string-array name="list_products">
+            <item>Discador</item>
+            <item>URA Ativa</item>
+            <item>URA Reversa</item>
+            <item>Outro</item>
+        </string-array>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="str_contracted_values"></string>
+
+    <string-array name="list_contracted_plans">
+        <item>Tarifado</item>
+        <item>Ilimitado</item>
+        <item>Outro</item>
+    </string-array>
+
+</resources>
