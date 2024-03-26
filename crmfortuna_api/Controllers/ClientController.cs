@@ -19,12 +19,12 @@ public class ClientController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllClients(){
         try{
-        ClientModel[] clients = await _clientApplication.FindAllClients();
-        if(clients == null){
-            return NoContent();
-        }
+            ClientModel[] clients = await _clientApplication.FindAllClients();
+            if(clients == null){
+                return NoContent();
+            }
 
-        return Ok(clients);
+            return Ok(clients);
         }
         catch (Exception ex){
             return this.StatusCode(StatusCodes.Status500InternalServerError,
@@ -75,12 +75,12 @@ public class ClientController : ControllerBase
         }
     }
 
-    [HttpPut]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpadateClient(ClientModel model, int id){
         try{
             var request = await _clientApplication.UpdateClient(model, id);
             if(request == null){
-                return NoContent();
+                return BadRequest();
             }
             return Ok(model);
         }
@@ -90,13 +90,12 @@ public class ClientController : ControllerBase
         }
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteClient(int id){
         try{
             var request = await _clientApplication.DeleteClient(id);
             if(request != true){
-                return this.StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Something went wront deleting this client.");
+                return BadRequest();
             }
             return Ok("Client successfuly deleted.");
         }
