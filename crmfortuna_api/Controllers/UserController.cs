@@ -47,17 +47,17 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("login/{login}")]
-    public async Task<IActionResult> GetAllUserByLogin(string login){
+    public async Task<IActionResult> GetUserByLogin(string login){
         try{
-            UserModel[] users = await _userApplication.FindAllUserByLogin(login);
-            if(users == null){
+            UserModel user = await _userApplication.FindUserByLogin(login);
+            if(user == null){
                 return NoContent();
             }
-            return Ok(users);
+            return Ok(user);
         }
         catch(Exception ex){
             return this.StatusCode(StatusCodes.Status500InternalServerError,
-                $"An error ocurred trying get users by login = {login}. Erro message: {ex.Message}");
+                $"An error ocurred trying get user by login = {login}. Erro message: {ex.Message}");
         }
     }
 

@@ -7,11 +7,12 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical"
-    android:layout_margin="20dp">
+    >
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp">
 
     <LinearLayout
     android:layout_width="match_parent"
@@ -69,6 +70,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_margin="30px"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray_light"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginVertical="5dp"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:id="@+id/list_element0">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kevin Felipe"
+                android:textStyle="bold"
+                android:textSize="40px"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/name_api"
+                />
+
+
+        </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -22,13 +22,9 @@ public class UserApplication : IUserAppllication
         return await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
     }
 
-    public async Task<UserModel[]> FindAllUserByLogin(string userName)
+    public async Task<UserModel> FindUserByLogin(string login)
     {
-        return await _context.Users
-            .OrderBy(user => user.Id)
-            .Where(user=>user.Login.ToLower()
-            .Contains(userName.ToLower()))
-            .ToArrayAsync();
+        return await _context.Users.FirstOrDefaultAsync(user => user.Login == login);
     }
 
 

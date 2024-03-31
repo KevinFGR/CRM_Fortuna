@@ -10,23 +10,26 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+import com.example.crm_fortuna.Models.ClientModel;
+import com.example.crm_fortuna.Services.GetTest;
+
+
+public class MainActivity extends AppCompatActivity{
     EditText txt_search;
     Button btn_search;
     Button btn_post;
     LinearLayout list_element1;
+    TextView name_api;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         txt_search = (EditText) findViewById(R.id.txt_search);
         btn_search = (Button) findViewById(R.id.btn_search);
-        btn_post = (Button) findViewById(R.id.btn_post);
+
         list_element1 = (LinearLayout)  findViewById(R.id.list_element1);
-
-
         list_element1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -34,10 +37,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btn_post = (Button) findViewById(R.id.btn_post);
         btn_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { goToPostActivity(); }
         });
+
+        GetTest getTest = new GetTest();
+        name_api = (TextView) findViewById(R.id.name_api);
+        String text = getTest.getAllUser();
+        name_api.setText(text);
+
     }
 
     private void goToDetailActivity(){
