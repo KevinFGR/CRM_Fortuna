@@ -12,6 +12,11 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public class GetTest {
+    public interface GetUserCallBack{
+        void onUserReceived(String users);
+        void onFalure(String errorMessage);
+    }
+
     private interface RequestUser{
         // @GET("api/client/{user_id}")
         // Call<UserModel> getUser(@Path("user_id") String user_id);
@@ -27,8 +32,23 @@ public class GetTest {
 
     private RequestUser requestUser = retrofit.create(RequestUser.class);
 
-    public String getAllUser(){
-        Call<UserModel[]> user = requestUser.getUser();
-        return user.toString();
+    public void getAllUser(final GetUserCallBack callback) {
+        Call<UserModel[]> call = requestUser.getUser();
+        call.enqueue(new Callback<UserModel[]>() {
+            @Override
+            public void onResponse(Call<UserModel[]> call, Response<UserModel[]> response) {
+                if (response.isSuccessful()) {
+                    UserModel[] users = response.body();
+                    callback.onUserReceived(users.toString());
+                }else{
+                    callback.onFalure("Error getting users");
+                }
+            }
+            @Override
+            public void onFailure(Call<UserModel[]> call, Throwable throwable) {
+                callback.onFalure(
+                        throwable.getMessage());
+            }
+        });
     }
 }

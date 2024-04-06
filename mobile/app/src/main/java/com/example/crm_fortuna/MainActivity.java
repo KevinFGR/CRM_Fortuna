@@ -16,8 +16,7 @@ import com.example.crm_fortuna.Services.GetTest;
 
 public class MainActivity extends AppCompatActivity{
     EditText txt_search;
-    Button btn_search;
-    Button btn_post;
+    Button btn_search, btn_post;
     LinearLayout list_element1;
     TextView name_api;
 
@@ -43,11 +42,21 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View v) { goToPostActivity(); }
         });
 
-        GetTest getTest = new GetTest();
         name_api = (TextView) findViewById(R.id.name_api);
-        String text = getTest.getAllUser();
-        name_api.setText(text);
 
+        GetTest getTest = new GetTest();
+        getTest.getAllUser(new GetTest.GetUserCallBack() {
+            @Override
+            public void onUserReceived(String users) {
+
+                name_api.setText(users);
+            }
+
+            @Override
+            public void onFalure(String errorMessage) {
+                name_api.setText(errorMessage);
+            }
+        });
     }
 
     private void goToDetailActivity(){
