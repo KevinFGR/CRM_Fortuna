@@ -10,8 +10,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.crm_fortuna.Models.ClientModel;
-import com.example.crm_fortuna.Services.GetTest;
+import com.example.crm_fortuna.Models.UserModel;
+import com.example.crm_fortuna.Services.GetUser;
+import com.example.crm_fortuna.Services.Interfaces.ICallBack;
 
 
 public class MainActivity extends AppCompatActivity{
@@ -44,12 +45,19 @@ public class MainActivity extends AppCompatActivity{
 
         name_api = (TextView) findViewById(R.id.name_api);
 
-        GetTest getTest = new GetTest();
-        getTest.getAllUser(new GetTest.GetUserCallBack() {
+        GetUser getUser = new GetUser();
+        getUser.getUserById("dev@kevin", new ICallBack() {
             @Override
-            public void onUserReceived(String users) {
-
-                name_api.setText(users);
+            public void onUserReceived(UserModel users) {
+                if(users == null){
+                    name_api.setText("Users Null result");
+                }
+                else if(users.getName() == null){
+                    name_api.setText("name is null");
+                }
+                else{
+                    name_api.setText(users.getUserPosition());
+                }
             }
 
             @Override

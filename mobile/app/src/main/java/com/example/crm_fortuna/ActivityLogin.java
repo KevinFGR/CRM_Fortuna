@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class ActivityLogin extends AppCompatActivity{
 
@@ -26,13 +27,27 @@ public class ActivityLogin extends AppCompatActivity{
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToMainActivity();
+                String login = txt_user.getText().toString();
+                String pass = txt_password.getText().toString();
+
+                if(authentication(login, pass)){
+                    goToMainActivity();
+                }else{
+                    showToast("This user do not exists or the password do not match.");
+                }
             }
         });
+    }
+
+    private boolean authentication(String login, String pass){
+        return false;
     }
     private void goToMainActivity () {
         Intent mainActivity = new Intent(this, MainActivity.class);
         startActivity(mainActivity);
+    }
+    public void showToast(String content){
+        Toast.makeText(this, content, Toast.LENGTH_LONG).show();
     }
 
 }
