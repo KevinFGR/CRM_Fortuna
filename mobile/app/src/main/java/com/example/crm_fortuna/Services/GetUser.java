@@ -10,10 +10,17 @@ import retrofit2.Response;
 
 public class GetUser {
 
+    private String login;
+    public UserModel user;
+
+    public GetUser(String login){
+        this.login = login;
+    }
+
     public IUserService iUserService = IUserService.retrofit.create(IUserService.class);
 
-    public void getUserById(String user_login, final ICallBack callback) {
-        Call<UserModel> call = iUserService.getUserByLogin(user_login);
+    public void getUserByLogin(final ICallBack callback) {
+        Call<UserModel> call = iUserService.getUserByLogin(this.login);
         call.enqueue(new Callback<UserModel>() {
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
@@ -32,5 +39,6 @@ public class GetUser {
                 );
             }
         });
+
     }
 }

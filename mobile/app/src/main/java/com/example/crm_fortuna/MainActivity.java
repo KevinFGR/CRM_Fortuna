@@ -45,8 +45,8 @@ public class MainActivity extends AppCompatActivity{
 
         name_api = (TextView) findViewById(R.id.name_api);
 
-        GetUser getUser = new GetUser();
-        getUser.getUserById("dev@kevin", new ICallBack() {
+        GetUser getUser = new GetUser("dev@kevin");
+        getUser.getUserByLogin(new ICallBack() {
             @Override
             public void onUserReceived(UserModel users) {
                 if(users == null){

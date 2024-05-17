@@ -9,6 +9,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.crm_fortuna.Models.UserModel;
+import com.example.crm_fortuna.Services.GetUser;
+import com.example.crm_fortuna.Services.Interfaces.ICallBack;
+
 public class ActivityLogin extends AppCompatActivity{
 
     Button btn_login;
@@ -30,17 +34,30 @@ public class ActivityLogin extends AppCompatActivity{
                 String login = txt_user.getText().toString();
                 String pass = txt_password.getText().toString();
 
-                if(authentication(login, pass)){
-                    goToMainActivity();
-                }else{
-                    showToast("This user do not exists or the password do not match.");
-                }
+                authentication(login, pass);
             }
         });
     }
 
-    private boolean authentication(String login, String pass){
-        return false;
+    private void authentication(String login, String passw){
+        GetUser getUser = new GetUser(login);
+        getUser.getUserByLogin(new ICallBack(){
+            @Override
+            public void onUserReceived(UserModel users) {
+                if(users == null){
+                    showToast("This user do not exists.");
+                } else if (users.getPassword().equals(passw)) {
+                    goToMainActivity();
+                }else{
+                    showToast(users.getPassword());
+                }
+            }
+
+            @Override
+            public void onFalure(String errorMessage) {
+                showToast("Something went wrong.");
+            }
+        });
     }
     private void goToMainActivity () {
         Intent mainActivity = new Intent(this, MainActivity.class);
