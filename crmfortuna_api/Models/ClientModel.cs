@@ -9,6 +9,7 @@ namespace crmfortuna_api.Models
         public string CPF_CNPJ { get; set; }
         public string Product { get; set; }
         public string Contracted_plan {get; set;}
+        public int Positions {get; set;}
         public int Channels { get; set; }
         public decimal Price { get; set; }
         public string Description { get; set; }

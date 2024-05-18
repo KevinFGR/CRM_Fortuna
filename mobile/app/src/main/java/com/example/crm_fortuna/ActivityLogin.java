@@ -10,8 +10,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.crm_fortuna.Models.UserModel;
-import com.example.crm_fortuna.Services.GetUser;
-import com.example.crm_fortuna.Services.Interfaces.ICallBack;
+import com.example.crm_fortuna.Services.UserService;
+import com.example.crm_fortuna.Services.Interfaces.IUserCallback;
 
 public class ActivityLogin extends AppCompatActivity{
 
@@ -31,6 +31,8 @@ public class ActivityLogin extends AppCompatActivity{
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btn_login.setText("LOADING ...");
+
                 String login = txt_user.getText().toString();
                 String pass = txt_password.getText().toString();
 
@@ -40,22 +42,28 @@ public class ActivityLogin extends AppCompatActivity{
     }
 
     private void authentication(String login, String passw){
-        GetUser getUser = new GetUser(login);
-        getUser.getUserByLogin(new ICallBack(){
+
+        UserService userService = new UserService();
+        userService.getUserByLogin(login, new IUserCallback(){
             @Override
             public void onUserReceived(UserModel users) {
                 if(users == null){
                     showToast("This user do not exists.");
+                    btn_login.setText("LOGIN");
                 } else if (users.getPassword().equals(passw)) {
                     goToMainActivity();
+                    btn_login.setText("LOGIN");
                 }else{
-                    showToast(users.getPassword());
+                    showToast("The password do not match");
+                    btn_login.setText("LOGIN");
                 }
             }
 
             @Override
             public void onFalure(String errorMessage) {
+
                 showToast("Something went wrong.");
+                btn_login.setText("LOGIN");
             }
         });
     }

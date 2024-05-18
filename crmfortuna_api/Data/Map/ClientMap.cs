@@ -15,6 +15,7 @@ namespace crmfortuna_api.Data.Map
             builder.Property(client =>client.CPF_CNPJ).IsRequired().HasMaxLength(20);
             builder.Property(client =>client.Product).IsRequired().HasMaxLength(20);
             builder.Property(client =>client.Contracted_plan).IsRequired().HasMaxLength(20);
+            builder.Property(client =>client.Positions).IsRequired();
             builder.Property(client =>client.Channels).IsRequired();
             builder.Property(client =>client.Price).IsRequired();
             builder.Property(client =>client.Description).IsRequired().HasMaxLength(500);
