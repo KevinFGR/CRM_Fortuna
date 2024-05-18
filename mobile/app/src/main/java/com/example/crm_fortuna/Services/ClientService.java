@@ -34,15 +34,46 @@ public class ClientService{
 
         }
 
+        public void getClientById(String client_id, IClientCallback callback) {
 
-        public Call<ClientModel> getClientById(String client_id) {
-            return null;
+            Call<ClientModel> call = iClientService.getClientById(client_id);
+            call.enqueue(new Callback<ClientModel>() {
+                @Override
+                public void onResponse(Call<ClientModel> call, Response<ClientModel> response) {
+                    if(response.isSuccessful()){
+                        ClientModel client = response.body();
+                        callback.onClientReceived(client);
+                    }else{
+                        callback.onFalure("Something went wrong trying to get clients by id");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ClientModel> call, Throwable throwable) {
+                    callback.onFalure(throwable.getMessage());
+                }
+            });
+
         }
 
+        public void getAllClients(IClientCallback callback) {
+            Call<ClientModel[]> call = iClientService.getAllClients();
+            call.enqueue(new Callback<ClientModel[]>() {
+                @Override
+                public void onResponse(Call<ClientModel[]> call, Response<ClientModel[]> response) {
+                    if(response.isSuccessful()){
+                        ClientModel[] clients = response.body();
+                        callback.onClientsReceived(clients);
+                    }else{
+                        callback.onFalure("Something wrong occurred trying get all clients");
+                    }
+                }
 
-        public Call<ClientModel[]> getAllClients() {
-            return null;
+                @Override
+                public void onFailure(Call<ClientModel[]> call, Throwable throwable) {
+                    callback.onFalure(throwable.getMessage());
+                }
+            });
         }
-
 
 }

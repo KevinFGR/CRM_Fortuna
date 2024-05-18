@@ -2,13 +2,13 @@ package com.example.crm_fortuna;
 
 import static com.google.android.material.internal.ViewUtils.dpToPx;
 
-import androidx.annotation.Dimension;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,6 +24,7 @@ import com.example.crm_fortuna.Services.Interfaces.IClientCallback;
 
 
 public class MainActivity extends AppCompatActivity{
+    ClientService clientService = new ClientService();
     EditText txt_search;
     Button btn_search, btn_post;
     LinearLayout list_element1;
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity{
 
         content = (LinearLayout) findViewById(R.id.content);
 
+        //Just for tests
+        name_api = (TextView) findViewById(R.id.name_api);
+
         txt_search = (EditText) findViewById(R.id.txt_search);
         btn_search = (Button) findViewById(R.id.btn_search);
 
@@ -44,7 +48,7 @@ public class MainActivity extends AppCompatActivity{
         list_element1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToDetailActivity();
+                goToDetailActivity("1");
             }
         });
 
@@ -54,31 +58,60 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View v) { goToPostActivity(); }
         });
 
-        name_api = (TextView) findViewById(R.id.name_api);
+        btn_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btn_search.setText("LOADING ...");
+                String name = txt_search.getText().toString();
+                getClientByName(name);
 
-        ClientService clientService = new ClientService();
-        clientService.getClientByName("e", new IClientCallback() {
+            }
+        });
+        getAllClients();
+    }
+    private void goToDetailActivity(String client_id){
+        Intent detailActivity = new Intent(this, DetailActivity.class);
+        detailActivity.putExtra("CLIENT_ID", client_id);
+        startActivity(detailActivity);
+    }
+    private void goToPostActivity(){
+        Intent postActivity = new Intent(this, PostActivity.class);
+        startActivity(postActivity);
+    }
+
+    private void getAllClients(){
+
+    }
+
+    // Get all the clients that contains the name and create the div (LinearLayout) to show then on activity
+    private void getClientByName(String name){
+        clientService.getClientByName(name, new IClientCallback() {
             @Override
             public void onClientsReceived(ClientModel[] clients) {
                 if(clients == null){
                     Toast.makeText(MainActivity.this, "Clients is null", Toast.LENGTH_SHORT).show();
                 }
                 else if(clients[0].getName() == null){
-                    Toast.makeText(MainActivity.this, "name is null", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Client information is null", Toast.LENGTH_SHORT).show();
                 }
                 else{
+                    content.removeAllViews();
                     for (ClientModel client:clients) {
 
+                        String id = String.valueOf(client.getId());
                         String name = client.getName();
                         String prod = client.getProduct();
                         String contrP = client.getContracted_plan();
                         String position = String.valueOf(client.getPositions());
 
-                        createDivClient(name, prod, contrP, position);
+                        createDivClient(id, name, prod, contrP, position);
+
                     }
                 }
+                btn_search.setText("SEARCH");
             }
 
+            // implemented only when the method returns one client instead of a list
             @Override
             public void onClientReceived(ClientModel client) {
 
@@ -86,19 +119,14 @@ public class MainActivity extends AppCompatActivity{
 
             @Override
             public void onFalure(String errorMessage) {
-                name_api.setText(errorMessage);
+                Toast.makeText(MainActivity.this,errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
+
     }
-    private void goToDetailActivity(){
-        Intent detailActivity = new Intent(this, DetailActivity.class);
-        startActivity(detailActivity);
-    }
-    private void goToPostActivity(){
-        Intent postActivity = new Intent(this, PostActivity.class);
-        startActivity(postActivity);
-    }
-    private void createDivClient(String name, String product, String contrP, String positions){
+
+    // create the structure that contains the client information to show on activity
+    private void createDivClient(String id, String name, String product, String contrP, String positions){
         // Creating the linear layout that will have inside all the client's informations
         LinearLayout clientDiv = new LinearLayout(this);
         LinearLayout.LayoutParams clientDivP = new LinearLayout.LayoutParams(
@@ -110,6 +138,12 @@ public class MainActivity extends AppCompatActivity{
         clientDiv.setOrientation(LinearLayout.VERTICAL);
         clientDiv.setPadding(dpToPx(20),dpToPx(20),dpToPx(20),dpToPx(20));
         clientDiv.setBackgroundColor(ContextCompat.getColor(this,R.color.gray_light));
+        clientDiv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToDetailActivity(id);
+            }
+        });
 
         // Creating the TextView for the Client Name
         TextView txtName = new TextView(this);
@@ -132,7 +166,10 @@ public class MainActivity extends AppCompatActivity{
         clientDiv.addView(positionLayout);
         content.addView(clientDiv);
 
+
     }
+
+    // create the structure of the lines (Horizontal linearLayout) inside the client linearLayout
     private LinearLayout createHorizontalLayout(String lbl, String value){
         // Creating the Horizontal layout for product informations
         LinearLayout horizontalLayout = new LinearLayout(this);
@@ -164,6 +201,8 @@ public class MainActivity extends AppCompatActivity{
 
         return horizontalLayout;
     }
+
+    // To transform DP at Pixels, used by structures methods tha was created
     private int dpToPx(int dp){
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dp*density);

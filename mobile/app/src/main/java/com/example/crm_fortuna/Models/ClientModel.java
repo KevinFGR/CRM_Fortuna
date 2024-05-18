@@ -1,17 +1,31 @@
 package com.example.crm_fortuna.Models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ClientModel {
+
+    @SerializedName("id")
     private int id;
+    @SerializedName("name")
     private String name;
+    @SerializedName("email")
     private String email;
+    @SerializedName("phone")
     private String phone;
+    @SerializedName("cpF_CNPJ")
     private String cpF_CNPJ;
+    @SerializedName("product")
     private String product;
+    @SerializedName("contracted_plan")
     private String contracted_plan;
-    private int positions;
-    private int channels;
-    private float price;
+    @SerializedName("description")
     private String description;
+    @SerializedName("positions")
+    private int positions;
+    @SerializedName("channels")
+    private int channels;
+    @SerializedName("price")
+    private float price;
 
 
     public int getId() { return this.id; }
