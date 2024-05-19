@@ -210,7 +210,7 @@
 
                     android:textColor="@color/white"
                     android:background="@drawable/btn_radius_blue"
-                    android:id="@+id/btn_save"
+                    android:id="@+id/btn_update"
                     />
             </LinearLayout>
         </LinearLayout>

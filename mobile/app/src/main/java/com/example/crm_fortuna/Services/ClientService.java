@@ -76,4 +76,24 @@ public class ClientService{
             });
         }
 
+        public void updateClient(String id, ClientModel client, IClientCallback callback){
+            Call<Response<ClientModel>> call = iClientService.updateClient(id,client);
+
+            call.enqueue(new Callback<Response<ClientModel>>() {
+                @Override
+                public void onResponse(Call<Response<ClientModel>> call, Response<Response<ClientModel>> response) {
+                    if(response.isSuccessful()) {
+                        ClientModel client = response.body().body();
+                        callback.onClientReceived(client);
+                    }else{
+                        callback.onFalure("Something went wrong trying to update client");
+                    }
+                }
+                @Override
+                public void onFailure(Call<Response<ClientModel>> call, Throwable throwable) {
+                    callback.onFalure(throwable.getMessage());
+                }
+            });
+        }
+
 }

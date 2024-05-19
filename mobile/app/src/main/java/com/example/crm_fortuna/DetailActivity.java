@@ -15,6 +15,7 @@ import com.example.crm_fortuna.Services.ClientService;
 import com.example.crm_fortuna.Services.Interfaces.IClientCallback;
 
 public class DetailActivity extends AppCompatActivity{
+    // update is executing correctly on API but retrofit is returning TimeOut Exception instead of success.
     Button btn_delete, btn_update, btn_back;
     String client_id;
     TextView txt_name,txt_email, txt_phone, txt_cpf_cnpj, txt_product, txt_contrP,txt_positions, txt_channels,txt_price, txt_description;
@@ -71,6 +72,18 @@ public class DetailActivity extends AppCompatActivity{
     }
     private void goToUpdateActivity(){
         Intent updateActivity = new Intent(this, UpdateActivity.class);
+        updateActivity.putExtra("CLIENT_ID", client_id);
+        updateActivity.putExtra("NAME", name);
+        updateActivity.putExtra("EMAIL", email);
+        updateActivity.putExtra("PHONE", phone);
+        updateActivity.putExtra("CPF_CNPJ",cpf_cnpj);
+        updateActivity.putExtra("PRODUCT",product);
+        updateActivity.putExtra("CONTRP",contrP);
+        updateActivity.putExtra("POSITIONS",positions);
+        updateActivity.putExtra("CHANNELS",channels);
+        updateActivity.putExtra("PRICE",price);
+        updateActivity.putExtra("DESCRIPTION",description);
+
         startActivity(updateActivity);
     }
     private void getClientById(String id){

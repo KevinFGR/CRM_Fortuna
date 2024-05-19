@@ -1,14 +1,11 @@
 package com.example.crm_fortuna;
 
-import static com.google.android.material.internal.ViewUtils.dpToPx;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -21,13 +18,10 @@ import com.example.crm_fortuna.Models.ClientModel;
 import com.example.crm_fortuna.Services.ClientService;
 import com.example.crm_fortuna.Services.Interfaces.IClientCallback;
 
-
-
 public class MainActivity extends AppCompatActivity{
     ClientService clientService = new ClientService();
     EditText txt_search;
     Button btn_search, btn_post;
-    LinearLayout list_element1;
     TextView name_api;
     LinearLayout content;
 
@@ -44,14 +38,6 @@ public class MainActivity extends AppCompatActivity{
         txt_search = (EditText) findViewById(R.id.txt_search);
         btn_search = (Button) findViewById(R.id.btn_search);
 
-        list_element1 = (LinearLayout)  findViewById(R.id.list_element1);
-        list_element1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToDetailActivity("1");
-            }
-        });
-
         btn_post = (Button) findViewById(R.id.btn_post);
         btn_post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,10 +50,18 @@ public class MainActivity extends AppCompatActivity{
                 btn_search.setText("LOADING ...");
                 String name = txt_search.getText().toString();
                 getClientByName(name);
-
             }
         });
-        getAllClients();
+        try {
+            getAllClients();
+        }catch(Exception e) {
+            showToast(e.getMessage());
+            try {
+                getAllClients();
+            }catch(Exception ex){
+                showToast(ex.getMessage());
+            }
+        }
     }
     private void goToDetailActivity(String client_id){
         Intent detailActivity = new Intent(this, DetailActivity.class);
@@ -80,7 +74,37 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void getAllClients(){
+        clientService.getAllClients(new IClientCallback() {
+            @Override
+            public void onClientReceived(ClientModel client) {
+                // Just implemented when the method return one element
+            }
 
+            @Override
+            public void onClientsReceived(ClientModel[] clients) {
+                if(clients == null){
+                    showToast("Clients are null");
+                }else if(clients[0].getName() == null){
+                    showToast("Clients content are null");
+                }else{
+                    content.removeAllViews();
+                    for (ClientModel client:clients) {
+
+                        String id = String.valueOf(client.getId());
+                        String name = client.getName();
+                        String prod = client.getProduct();
+                        String contrP = client.getContracted_plan();
+                        String position = String.valueOf(client.getPositions());
+
+                        createDivClient(id, name, prod, contrP, position);
+                    }
+                }
+            }
+            @Override
+            public void onFalure(String errorMessage) {
+                showToast("Something went wrong trying to get all clients");
+            }
+        });
     }
 
     // Get all the clients that contains the name and create the div (LinearLayout) to show then on activity
@@ -89,10 +113,10 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onClientsReceived(ClientModel[] clients) {
                 if(clients == null){
-                    Toast.makeText(MainActivity.this, "Clients is null", Toast.LENGTH_SHORT).show();
+                    showToast("Clients is null");
                 }
                 else if(clients[0].getName() == null){
-                    Toast.makeText(MainActivity.this, "Client information is null", Toast.LENGTH_SHORT).show();
+                    showToast("Client information is null");
                 }
                 else{
                     content.removeAllViews();
@@ -105,24 +129,19 @@ public class MainActivity extends AppCompatActivity{
                         String position = String.valueOf(client.getPositions());
 
                         createDivClient(id, name, prod, contrP, position);
-
                     }
                 }
                 btn_search.setText("SEARCH");
             }
-
-            // implemented only when the method returns one client instead of a list
             @Override
             public void onClientReceived(ClientModel client) {
-
+                // implemented only when the method returns one client instead of a list
             }
-
             @Override
             public void onFalure(String errorMessage) {
-                Toast.makeText(MainActivity.this,errorMessage, Toast.LENGTH_SHORT).show();
+                showToast(errorMessage);
             }
         });
-
     }
 
     // create the structure that contains the client information to show on activity
@@ -165,8 +184,6 @@ public class MainActivity extends AppCompatActivity{
         clientDiv.addView(contrPLayout);
         clientDiv.addView(positionLayout);
         content.addView(clientDiv);
-
-
     }
 
     // create the structure of the lines (Horizontal linearLayout) inside the client linearLayout
@@ -206,5 +223,8 @@ public class MainActivity extends AppCompatActivity{
     private int dpToPx(int dp){
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dp*density);
+    }
+    private void showToast(String message){
+        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 }
