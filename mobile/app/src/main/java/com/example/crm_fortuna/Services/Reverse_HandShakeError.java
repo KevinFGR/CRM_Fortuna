@@ -1,6 +1,7 @@
 package com.example.crm_fortuna.Services;
 
 import java.security.cert.CertificateException;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -41,6 +42,8 @@ public class Reverse_HandShakeError {
 
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+            builder.readTimeout(80, TimeUnit.SECONDS);
+            builder.connectTimeout(80, TimeUnit.SECONDS);
             builder.hostnameVerifier(new HostnameVerifier() {
                 @Override
                 public boolean verify(String hostname, SSLSession session) {

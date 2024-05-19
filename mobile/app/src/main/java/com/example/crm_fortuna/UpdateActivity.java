@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,10 +16,11 @@ import android.widget.Toast;
 import com.example.crm_fortuna.Models.ClientModel;
 import com.example.crm_fortuna.Services.ClientService;
 import com.example.crm_fortuna.Services.Interfaces.IClientCallback;
+import com.example.crm_fortuna.Helpers.GetClientOnView;
 
 public class UpdateActivity extends AppCompatActivity {
     Button btn_cancel, btn_update;
-    Spinner sp_contracted_plan, sp_product;
+    Spinner sp_contrP, sp_product;
     EditText txt_name, txt_email, txt_phone, txt_cpf_cnpj, txt_positions, txt_channels, txt_price, txt_description;
     String client_id, name,email, phone, cpf_cnpj, product, contrP, positions, channels, price, description;
     ClientService clientService;
@@ -41,36 +43,16 @@ public class UpdateActivity extends AppCompatActivity {
         btn_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ClientModel client = getClientOnView();
+                Log.d("btn_update","btn_update clicked");
+                btn_update.setText("LOADING ...");
+                ClientModel client = GetClientOnView.getClientOnView(txt_name,txt_email,txt_phone,
+                                        txt_cpf_cnpj,sp_product, sp_contrP,
+                                        txt_positions,txt_channels,txt_price,txt_description);
                 updateClient(client_id, client);
             }
         });
     }
-    private ClientModel getClientOnView(){
-        String name = String.valueOf(txt_name.getText());
-        String email = String.valueOf(txt_email.getText());
-        String phone = String.valueOf(txt_phone.getText());
-        String cpf_cnpj = String.valueOf(txt_cpf_cnpj.getText());
-        String product = String.valueOf(sp_product.getSelectedItem());
-        String contrP = String.valueOf(sp_contracted_plan.getSelectedItem());
-        int positions = Integer.parseInt(
-                String.valueOf(txt_positions.getText())
-        );
-        int channels = Integer.parseInt(
-                String.valueOf(txt_channels.getText())
-        );
-        float price = Float.parseFloat(
-                String.valueOf(txt_price.getText())
-        );
-        String description = String.valueOf(txt_description.getText());
 
-        return new ClientModel(
-                name, email, phone,
-                cpf_cnpj, product, contrP,
-                positions, channels, price,
-                description
-        );
-    }
     private void fillInputs(){
         // just separating the filling information to make the onCreate method cleaner.
         sp_product = (Spinner) findViewById(R.id.sp_product);
@@ -79,13 +61,13 @@ public class UpdateActivity extends AppCompatActivity {
                 this, android.R.layout.simple_gallery_item, products_options);
         sp_product.setAdapter(adapter_p);
 
-        sp_contracted_plan = (Spinner) findViewById(R.id.sp_contract_plan);
+        sp_contrP = (Spinner) findViewById(R.id.sp_contract_plan);
         //Taking the list information
         String[] contracted_plans_options = getResources().getStringArray(R.array.list_contracted_plans);
         //Passing the list items to the spinner
         ArrayAdapter<String> adapter_cp =new ArrayAdapter<String>(
                 this, android.R.layout.simple_gallery_item, contracted_plans_options);
-        sp_contracted_plan.setAdapter(adapter_cp);
+        sp_contrP.setAdapter(adapter_cp);
 
         txt_name = (EditText) findViewById(R.id.txt_name);
         txt_email = (EditText) findViewById(R.id.txt_email);
@@ -114,7 +96,7 @@ public class UpdateActivity extends AppCompatActivity {
         txt_phone.setText(phone);
         txt_cpf_cnpj.setText(cpf_cnpj);
         sp_product.setSelection(prodIndex(product));
-        sp_contracted_plan.setSelection(contrPIndex(contrP));
+        sp_contrP.setSelection(contrPIndex(contrP));
         txt_positions.setText(positions);
         txt_channels.setText(channels);
         txt_price.setText(price);
@@ -143,13 +125,9 @@ public class UpdateActivity extends AppCompatActivity {
         clientService.updateClient(id, client, new IClientCallback() {
             @Override
             public void onClientReceived(ClientModel client) {
-                if(client == null){
-                    showToast("The request returns a null client");
-                }else if(client.getName() ==null){
-                    showToast("The request returns a null client informations");
-                }else{
                     showToast("The client was successfuly updated");
-                }
+
+                Log.d("updateClient","onClientReceived");
                 goToMainActivity();
             }
 
@@ -160,6 +138,8 @@ public class UpdateActivity extends AppCompatActivity {
 
             @Override
             public void onFalure(String errorMessage) {
+
+                Log.d("updateClient(id, client)","onFailure");
                 showToast(errorMessage);
             }
         });

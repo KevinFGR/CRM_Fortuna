@@ -67,7 +67,7 @@ public class ClientController : ControllerBase
     public async Task<IActionResult> AddClient(ClientModel newClient){
         try{
             await _clientApplication.AddClient(newClient);
-            return this.StatusCode(StatusCodes.Status201Created);
+            return Ok(newClient);
         }
         catch(Exception ex){
             return this.StatusCode(StatusCodes.Status500InternalServerError,

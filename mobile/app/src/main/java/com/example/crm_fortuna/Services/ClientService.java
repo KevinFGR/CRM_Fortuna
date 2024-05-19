@@ -3,6 +3,7 @@ package com.example.crm_fortuna.Services;
 import com.example.crm_fortuna.Models.ClientModel;
 import com.example.crm_fortuna.Services.Interfaces.IClientService;
 import com.example.crm_fortuna.Services.Interfaces.IClientCallback;
+import com.example.crm_fortuna.Services.Interfaces.IDeleteCallback;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -76,6 +77,26 @@ public class ClientService{
             });
         }
 
+        public void postClient(ClientModel client, IClientCallback callback){
+            Call<Response<ClientModel>> call = iClientService.postClient(client);
+            call.enqueue(new Callback<Response<ClientModel>>() {
+                @Override
+                public void onResponse(Call<Response<ClientModel>> call, Response<Response<ClientModel>> response) {
+                    if(response.isSuccessful()){
+                        ClientModel client = response.body().body();
+                        callback.onClientReceived(client);
+                    }else {
+                        callback.onFalure("Something went wrong adding new client");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Response<ClientModel>> call, Throwable throwable) {
+                    callback.onFalure(throwable.getMessage());
+                }
+            });
+        }
+
         public void updateClient(String id, ClientModel client, IClientCallback callback){
             Call<Response<ClientModel>> call = iClientService.updateClient(id,client);
 
@@ -91,6 +112,24 @@ public class ClientService{
                 }
                 @Override
                 public void onFailure(Call<Response<ClientModel>> call, Throwable throwable) {
+                    callback.onFalure(throwable.getMessage());
+                }
+            });
+        }
+
+        public void deleteClient(String id, IDeleteCallback callback){
+            Call<Boolean> call = iClientService.deleteClient(id);
+            call.enqueue(new Callback<Boolean>() {
+                @Override
+                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                    if(response.isSuccessful()){
+                        callback.onClientDeleted(response.body());
+                    }else{
+                        callback.onFalure("Something wrong occurred trying to delete this client");
+                    }
+                }
+                @Override
+                public void onFailure(Call<Boolean> call, Throwable throwable) {
                     callback.onFalure(throwable.getMessage());
                 }
             });

@@ -63,15 +63,6 @@ public class MainActivity extends AppCompatActivity{
             }
         }
     }
-    private void goToDetailActivity(String client_id){
-        Intent detailActivity = new Intent(this, DetailActivity.class);
-        detailActivity.putExtra("CLIENT_ID", client_id);
-        startActivity(detailActivity);
-    }
-    private void goToPostActivity(){
-        Intent postActivity = new Intent(this, PostActivity.class);
-        startActivity(postActivity);
-    }
 
     private void getAllClients(){
         clientService.getAllClients(new IClientCallback() {
@@ -89,14 +80,7 @@ public class MainActivity extends AppCompatActivity{
                 }else{
                     content.removeAllViews();
                     for (ClientModel client:clients) {
-
-                        String id = String.valueOf(client.getId());
-                        String name = client.getName();
-                        String prod = client.getProduct();
-                        String contrP = client.getContracted_plan();
-                        String position = String.valueOf(client.getPositions());
-
-                        createDivClient(id, name, prod, contrP, position);
+                        createDivClient(client);
                     }
                 }
             }
@@ -121,14 +105,7 @@ public class MainActivity extends AppCompatActivity{
                 else{
                     content.removeAllViews();
                     for (ClientModel client:clients) {
-
-                        String id = String.valueOf(client.getId());
-                        String name = client.getName();
-                        String prod = client.getProduct();
-                        String contrP = client.getContracted_plan();
-                        String position = String.valueOf(client.getPositions());
-
-                        createDivClient(id, name, prod, contrP, position);
+                        createDivClient(client);
                     }
                 }
                 btn_search.setText("SEARCH");
@@ -145,7 +122,22 @@ public class MainActivity extends AppCompatActivity{
     }
 
     // create the structure that contains the client information to show on activity
-    private void createDivClient(String id, String name, String product, String contrP, String positions){
+    private void createDivClient(ClientModel client){
+        String id, name, email, phone, cpf_cnpj, product, contrP, positions, channels, price,description;
+
+        id = String.valueOf(client.getId());
+        name = client.getName();
+        email = client.getEmail();
+        phone = client.getPhone();
+        cpf_cnpj = client.getCPF_CNPJ();
+        product = client.getProduct();
+        contrP = client.getContracted_plan();
+        positions = String.valueOf(client.getPositions());
+        channels = String.valueOf(client.getChannels());
+        price = String.valueOf(client.getPrice());
+        description = client.getDescription();
+
+
         // Creating the linear layout that will have inside all the client's informations
         LinearLayout clientDiv = new LinearLayout(this);
         LinearLayout.LayoutParams clientDivP = new LinearLayout.LayoutParams(
@@ -160,7 +152,9 @@ public class MainActivity extends AppCompatActivity{
         clientDiv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToDetailActivity(id);
+                goToDetailActivity(id ,name, email, phone,
+                                    cpf_cnpj, product, contrP,
+                                    positions, channels, price, description );
             }
         });
 
@@ -217,6 +211,30 @@ public class MainActivity extends AppCompatActivity{
         horizontalLayout.addView(txtValue);
 
         return horizontalLayout;
+    }
+
+    private void goToDetailActivity(String client_id, String name, String email,
+                                    String phone, String cpf_cnpj, String product,
+                                    String contrP, String positions, String channels,
+                                    String price, String description){
+        Intent detailActivity = new Intent(this, DetailActivity.class);
+        detailActivity.putExtra("CLIENT_ID", client_id);
+        detailActivity.putExtra("NAME",name );
+        detailActivity.putExtra("EMAIL",email );
+        detailActivity.putExtra("PHONE",phone );
+        detailActivity.putExtra("CPF_CNPJ",cpf_cnpj );
+        detailActivity.putExtra("PRODUCT",product );
+        detailActivity.putExtra("CONTRP",contrP );
+        detailActivity.putExtra("POSITIONS",positions );
+        detailActivity.putExtra("CHANNELS",channels );
+        detailActivity.putExtra("PRICE",price );
+        detailActivity.putExtra("DESCRIPTION",description );
+        startActivity(detailActivity);
+    }
+
+    private void goToPostActivity(){
+        Intent postActivity = new Intent(this, PostActivity.class);
+        startActivity(postActivity);
     }
 
     // To transform DP at Pixels, used by structures methods tha was created
